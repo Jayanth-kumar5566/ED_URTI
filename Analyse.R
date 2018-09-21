@@ -9,3 +9,8 @@ for (i in colnames(X_data)){
   print(summary(X_data[[i]]))
 }
 # There is a missing data in Sa02..lowest
+
+#Gower distance and clustering
+library(cluster)
+X_dist=daisy(X_data,metric="gower")
+h_tree=hclust(X_diss,method = "ward.D2")
