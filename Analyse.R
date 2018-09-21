@@ -13,7 +13,7 @@ for (i in colnames(X_data)){
 #Gower distance and clustering
 library(cluster)
 X_dist=daisy(X_data,metric="gower")
-h_tree=hclust(X_diss,method = "ward.D2")
+h_tree=hclust(X_dist,method = "ward.D2")
 labels=cutree(h_tree,k=2)
 
 #Comparing for the outcomes between the clusters
