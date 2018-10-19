@@ -50,4 +50,6 @@ for (i in 1:69){
 }
 
 #Choosing factors with Alpha value of 0.05
-dif[dif<0.05]
+ch_dif<-dif[dif<0.05]
+names(ch_dif)
+
