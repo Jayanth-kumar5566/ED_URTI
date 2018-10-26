@@ -1,6 +1,8 @@
 data=read.csv("Combined dataset_Sent to Jayanth 200918.csv")
 X_data=data[,3:72]
 X_data$Visit.quarter<-NULL #Removing Quater, since redundant
+X_data$Neck...FROM<-NULL #Told to remove by Joshua
+X_data$Eyes...PEARL<-NULL #Told to remove by Joshua
 y_data=data[,73:74]
 
 # Data Checking
@@ -28,13 +30,14 @@ x<-rbind(summary(pop1$VirusYes),summary(pop2$VirusYes))
 fisher.test(x)
 
 #Charaterzing the clusters
-X_data$cluster<-labels
+X_data$cluster<-factor(labels)
 pop1<-subset(X_data,cluster==1)
 pop2<-subset(X_data,cluster==2)
 dif<-list()
-for (i in 1:69){
+for (i in 1:67){
   if(class(X_data[,i])=="integer" | class(X_data[,i])=="numeric"){
-    t=wilcox.test(pop1[,i],pop2[,i])
+    form=as.formula(paste(names(X_data)[i],"cluster",sep="~"))
+    t=wilcox.test(form,data=X_data)
     #Multiply the p-value value by 2 to account for both side testing
     dif[[colnames(X_data)[i]]]<-(t$p.value)*2
   }
