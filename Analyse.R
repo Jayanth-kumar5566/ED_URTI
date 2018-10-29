@@ -1,16 +1,18 @@
-data=read.csv("Combined dataset_Sent to Jayanth 200918.csv")
+data=read.csv("Combined dataset_Sent to Jayanth 200918.csv",na.strings = "")
+#remove missing data
+data=na.omit(data)
 X_data=data[,3:72]
 X_data$Visit.quarter<-NULL #Removing Quater, since redundant
 X_data$Neck...FROM<-NULL #Told to remove by Joshua
 X_data$Eyes...PEARL<-NULL #Told to remove by Joshua
 y_data=data[,73:74]
-
+v_data=data[,75:90] #Virus data
 # Data Checking
 for (i in colnames(X_data)){
   print(i)
   print(summary(X_data[[i]]))
 }
-# There is a missing data in Sa02..lowest
+# There is a missing data in Sa02..lowest and v_data
 
 #Gower distance and clustering
 library(cluster)
