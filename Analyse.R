@@ -137,7 +137,7 @@ for (i in 2:15){
   pop3_r3<-table(factor(pop3[,i],levels=le))
   c_t<-rbind(pop1_r1,pop2_r2,pop3_r3)
   f<-fisher.test(c_t,simulate.p.value = TRUE)
-  print(f$p.value)
+  #print(f$p.value)
   #Dunns test try
   d_t=dunn.test(x=list(pop1[,i],pop2[,i],pop3[,i]),method = 'bh',alpha=0.05,kw=FALSE,list = TRUE,table = FALSE,altp = TRUE)
 }
