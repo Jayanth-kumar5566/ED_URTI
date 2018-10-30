@@ -20,7 +20,7 @@ X_dist=daisy(X_data,metric="gower")
 h_tree=hclust(X_dist,method = "ward.D2")
 
 #Cluster parameter selection using silhoutee
-pos_clus=c(2,3,4)
+pos_clus=c(2,3,4,5)
 clus_wid=c(0)
 avg_wid=c(0)
 for (i in pos_clus){
@@ -142,3 +142,52 @@ for (i in 2:15){
   d_t=dunn.test(x=list(pop1[,i],pop2[,i],pop3[,i]),method = 'bh',alpha=0.05,kw=FALSE,list = TRUE,table = FALSE,altp = TRUE)
 }
 # No outcomes depend on viruses
+
+
+#==========Clustering using MDS===================
+# X_dist is the distance matrix
+library(MASS)
+val=c()
+for (j in 2:15){
+  #i=isoMDS(X_dist,k=j)
+  i=sammon(X_dist,k=j)
+  val=c(val,i$stress)
+}
+plot(val)
+#=================Calculating the derivative===============
+x=2:15
+slopes=c()
+for(i in 1:14){
+  print(x[i])
+  s=(val[i+1]-val[i])/(x[i+1]-x[i])
+  print(s)
+  slopes=c(slopes,s)
+}
+diff(slopes)
+#=====================================================
+
+#i=isoMDS(X_dist,k=j)
+i=sammon(X_dist,k=10)
+#=======================Clustering==================
+d_c=i$points
+#=======Using hclust======
+d_mds=dist(d_c)
+h=hclust(d_mds,method = "ward.D2")
+plot(h)
+
+#Cluster parameter selection using silhoutee
+pos_clus=c(2,3,4,5)
+clus_wid=c(0)
+avg_wid=c(0)
+for (i in pos_clus){
+  t_lab=cutree(h,k=i)
+  v=silhouette(t_lab,dist=d_mds,full=TRUE,fun=mean)
+  t_s=summary(v)
+  clus_wid=rbind(clus_wid,paste(i,toString(t_s$clus.avg.widths)))
+  avg_wid=rbind(avg_wid,paste(i,t_s$avg.width))
+}
+
+print(clus_wid)
+print(avg_wid)
+
+b=cutree(h,k=3)
