@@ -109,6 +109,36 @@ for (i in 1:67){
 sink()
 #Choosing factors with Alpha value of 0.05
 ch_dif<-dif[dif<0.05]
-names(ch_dif)
+sel=names(ch_dif)
+print(sel)
 
+sink("table.csv")
+for (i in sel){
+  if(class(pop1[[i]])=="integer" | class(pop1[[i]])=="numeric"){
+  x=paste(i,median(pop1[[i]]),var(pop1[[i]]),median(pop2[[i]]),var(pop2[[i]]),median(pop3[[i]]),var(pop3[[i]]),ch_dif[[i]],sep=",")
+  print(x)
+  }
+  else{
+    x=paste(i,toString(table(pop1[[i]])),toString(table(pop2[[i]])),toString(table(pop3[[i]])),ch_dif[[i]],sep=",")
+    print(x)
+  }
+}
+sink()
 
+#Comparision with viruses
+v_data$cluster<-factor(labels)
+pop1<-subset(v_data,cluster==1)
+pop2<-subset(v_data,cluster==2)
+pop3<-subset(v_data,cluster==3)
+for (i in 2:15){
+  le=c("No","Yes")
+  pop1_r1<-table(factor(pop1[,i],levels=le))
+  pop2_r2<-table(factor(pop2[,i],levels=le))
+  pop3_r3<-table(factor(pop3[,i],levels=le))
+  c_t<-rbind(pop1_r1,pop2_r2,pop3_r3)
+  f<-fisher.test(c_t,simulate.p.value = TRUE)
+  print(f$p.value)
+  #Dunns test try
+  d_t=dunn.test(x=list(pop1[,i],pop2[,i],pop3[,i]),method = 'bh',alpha=0.05,kw=FALSE,list = TRUE,table = FALSE,altp = TRUE)
+}
+# No outcomes depend on viruses
