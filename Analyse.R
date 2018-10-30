@@ -31,6 +31,9 @@ clus_wid=rbind(clus_wid,paste(i,toString(t_s$clus.avg.widths)))
 avg_wid=rbind(avg_wid,paste(i,t_s$avg.width))
 }
 
+print(clus_wid)
+print(avg_wid)
+
 #Max silhoutee width is for 3 clusters
 labels=cutree(h_tree,k=3)
 #Comparing for the outcomes between the clusters
@@ -77,12 +80,16 @@ pop1<-subset(X_data,cluster==1)
 pop2<-subset(X_data,cluster==2)
 pop3<-subset(X_data,cluster==3)
 dif<-list()
+sink("Dunn-test.txt")
 for (i in 1:67){
   if(class(X_data[,i])=="integer" | class(X_data[,i])=="numeric"){
     form=as.formula(paste(names(X_data)[i],"cluster",sep="~"))
     t=kruskal.test(form,data=X_data)
     #Multiply the p-value value by 2 to account for both side testing
     dif[[colnames(X_data)[i]]]<-(t$p.value)
+    #Dunn test
+    print(colnames(X_data)[i])
+    d_t=dunn.test(x=list(pop1[,i],pop2[,i],pop3[,i]),method = 'bh',alpha=0.05,kw=FALSE,list = TRUE,table = FALSE,altp = TRUE)
   }
   else{
     # For categorical data comparision
@@ -93,10 +100,15 @@ for (i in 1:67){
     c_t<-rbind(pop1_r1,pop2_r2,pop3_r3)
     f<-fisher.test(c_t,simulate.p.value = TRUE)
     dif[[colnames(X_data)[i]]]<-(f$p.value)
+    #Dunns test
+    print(colnames(X_data)[i])
+    d_t=dunn.test(x=list(pop1[,i],pop2[,i],pop3[,i]),method = 'bh',alpha=0.05,kw=FALSE,list = TRUE,table = FALSE,altp = TRUE)
   }
 }
 
+sink()
 #Choosing factors with Alpha value of 0.05
 ch_dif<-dif[dif<0.05]
 names(ch_dif)
+
 
